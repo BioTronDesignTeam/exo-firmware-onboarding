@@ -31,15 +31,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  13 .debug_macro  000033a5  00000000  00000000  000218c5  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_line   000153a7  00000000  00000000  00024c6a  2**0
+ 14 .debug_line   00015498  00000000  00000000  00024c6a  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_str    001691bf  00000000  00000000  0003a011  2**0
+ 15 .debug_str    00169139  00000000  00000000  0003a102  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .comment      00000043  00000000  00000000  001a31d0  2**0
+ 16 .comment      00000043  00000000  00000000  001a323b  2**0
                   CONTENTS, READONLY
- 17 .debug_frame  000052d4  00000000  00000000  001a3214  2**2
+ 17 .debug_frame  00004ef0  00000000  00000000  001a3280  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_line_str 00000067  00000000  00000000  001a84e8  2**0
+ 18 .debug_line_str 00000057  00000000  00000000  001a8170  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -12220,25 +12220,25 @@ void xPortPendSVHandler( void )
  8004512:	ed20 8a10 	vstmdbeq	r0!, {s16-s31}
  8004516:	e920 4ff0 	stmdb	r0!, {r4, r5, r6, r7, r8, r9, sl, fp, lr}
  800451a:	6010      	str	r0, [r2, #0]
- 800451c:	e92d 0009 	stmdb	sp!, {r0, r3}
- 8004520:	f04f 0050 	mov.w	r0, #80	@ 0x50
- 8004524:	f380 8811 	msr	BASEPRI, r0
- 8004528:	f3bf 8f4f 	dsb	sy
- 800452c:	f3bf 8f6f 	isb	sy
- 8004530:	f7fe ffe6 	bl	8003500 <vTaskSwitchContext>
- 8004534:	f04f 0000 	mov.w	r0, #0
- 8004538:	f380 8811 	msr	BASEPRI, r0
- 800453c:	bc09      	pop	{r0, r3}
- 800453e:	6819      	ldr	r1, [r3, #0]
- 8004540:	6808      	ldr	r0, [r1, #0]
- 8004542:	e8b0 4ff0 	ldmia.w	r0!, {r4, r5, r6, r7, r8, r9, sl, fp, lr}
- 8004546:	f01e 0f10 	tst.w	lr, #16
- 800454a:	bf08      	it	eq
- 800454c:	ecb0 8a10 	vldmiaeq	r0!, {s16-s31}
- 8004550:	f380 8809 	msr	PSP, r0
- 8004554:	f3bf 8f6f 	isb	sy
- 8004558:	4770      	bx	lr
- 800455a:	bf00      	nop
+ 800451c:	b409      	push	{r0, r3}
+ 800451e:	f04f 0050 	mov.w	r0, #80	@ 0x50
+ 8004522:	f380 8811 	msr	BASEPRI, r0
+ 8004526:	f3bf 8f4f 	dsb	sy
+ 800452a:	f3bf 8f6f 	isb	sy
+ 800452e:	f7fe ffe7 	bl	8003500 <vTaskSwitchContext>
+ 8004532:	f04f 0000 	mov.w	r0, #0
+ 8004536:	f380 8811 	msr	BASEPRI, r0
+ 800453a:	bc09      	pop	{r0, r3}
+ 800453c:	6819      	ldr	r1, [r3, #0]
+ 800453e:	6808      	ldr	r0, [r1, #0]
+ 8004540:	e8b0 4ff0 	ldmia.w	r0!, {r4, r5, r6, r7, r8, r9, sl, fp, lr}
+ 8004544:	f01e 0f10 	tst.w	lr, #16
+ 8004548:	bf08      	it	eq
+ 800454a:	ecb0 8a10 	vldmiaeq	r0!, {s16-s31}
+ 800454e:	f380 8809 	msr	PSP, r0
+ 8004552:	f3bf 8f6f 	isb	sy
+ 8004556:	4770      	bx	lr
+ 8004558:	f3af 8000 	nop.w
  800455c:	f3af 8000 	nop.w
 
 08004560 <pxCurrentTCBConst>:
@@ -13113,18 +13113,18 @@ static void prvInsertBlockIntoFreeList( BlockLink_t * pxBlockToInsert ) /* PRIVI
 
 080049d4 <__libc_init_array>:
  80049d4:	b570      	push	{r4, r5, r6, lr}
- 80049d6:	4d0d      	ldr	r5, [pc, #52]	@ (8004a0c <__libc_init_array+0x38>)
- 80049d8:	4c0d      	ldr	r4, [pc, #52]	@ (8004a10 <__libc_init_array+0x3c>)
- 80049da:	1b64      	subs	r4, r4, r5
- 80049dc:	10a4      	asrs	r4, r4, #2
+ 80049d6:	4b0d      	ldr	r3, [pc, #52]	@ (8004a0c <__libc_init_array+0x38>)
+ 80049d8:	4d0d      	ldr	r5, [pc, #52]	@ (8004a10 <__libc_init_array+0x3c>)
+ 80049da:	1b5b      	subs	r3, r3, r5
+ 80049dc:	109c      	asrs	r4, r3, #2
  80049de:	2600      	movs	r6, #0
  80049e0:	42a6      	cmp	r6, r4
  80049e2:	d109      	bne.n	80049f8 <__libc_init_array+0x24>
- 80049e4:	4d0b      	ldr	r5, [pc, #44]	@ (8004a14 <__libc_init_array+0x40>)
- 80049e6:	4c0c      	ldr	r4, [pc, #48]	@ (8004a18 <__libc_init_array+0x44>)
- 80049e8:	f000 f826 	bl	8004a38 <_init>
- 80049ec:	1b64      	subs	r4, r4, r5
- 80049ee:	10a4      	asrs	r4, r4, #2
+ 80049e4:	f000 f828 	bl	8004a38 <_init>
+ 80049e8:	4d0a      	ldr	r5, [pc, #40]	@ (8004a14 <__libc_init_array+0x40>)
+ 80049ea:	4b0b      	ldr	r3, [pc, #44]	@ (8004a18 <__libc_init_array+0x44>)
+ 80049ec:	1b5b      	subs	r3, r3, r5
+ 80049ee:	109c      	asrs	r4, r3, #2
  80049f0:	2600      	movs	r6, #0
  80049f2:	42a6      	cmp	r6, r4
  80049f4:	d105      	bne.n	8004a02 <__libc_init_array+0x2e>
