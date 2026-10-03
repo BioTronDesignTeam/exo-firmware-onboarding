@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Flash the STM32H753 onboarding firmware; building is opt-in.
+set -euo pipefail
+
+build=false
+for argument in "$@"; do
+    case "$argument" in
+        --build|-Build) build=true ;;
+        -h|--help)
+            echo 'Usage: ./upload [--build]'
+            echo 'Flash build/exo-firmware-onboarding.bin; --build builds the firmware first.'
+            exit 0
+            ;;
+        *)
+            echo "Unknown argument: $argument. Use ./upload --help." >&2
+            exit 2
+            ;;
+    esac
+done
+
+project_root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$project_root"
+
+build_dir="$project_root/build"
+if [[ "$build" = true ]]; then
+    for tool in cmake ninja arm-none-eabi-gcc arm-none-eabi-objcopy arm-none-eabi-size; do
+        if ! command -v "$tool" >/dev/null 2>&1; then
+            echo "Missing $tool. See README.md for host setup." >&2
+            exit 1
+        fi
+    done
+    if [[ -f "$build_dir/CMakeCache.txt" ]] && grep -q '^CMAKE_HOST_SYSTEM_NAME:INTERNAL=Windows' "$build_dir/CMakeCache.txt"; then
+        echo "build/ contains a Windows CMake cache. Remove build/ or use a separate build directory." >&2
+        exit 1
+    fi
+    echo 'Building onboarding firmware...'
+    cmake -S "$project_root" -B "$build_dir" -G Ninja -DCMAKE_BUILD_TYPE=Debug
+    cmake --build "$build_dir"
+fi
+
+bin_file="$build_dir/exo-firmware-onboarding.bin"
+if [[ ! -f "$bin_file" ]]; then
+    echo "Firmware binary missing: $bin_file" >&2
+    echo 'Build in the dev container first, or run ./upload --build.' >&2
+    exit 1
+fi
+
+echo 'Flashing via ST-LINK SWD...'
+if command -v STM32_Programmer_CLI >/dev/null 2>&1; then
+    STM32_Programmer_CLI -c port=SWD -w "$bin_file" 0x08000000 -v -rst
+elif command -v openocd >/dev/null 2>&1; then
+    openocd -f interface/stlink.cfg -f target/stm32h7x.cfg \
+        -c "program build/exo-firmware-onboarding.bin verify reset exit 0x08000000"
+else
+    echo 'Missing STM32_Programmer_CLI or OpenOCD. See README.md for flashing setup.' >&2
+    exit 1
+fi
+echo 'Flash and verification complete. Board is running.'
